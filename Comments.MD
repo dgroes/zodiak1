@@ -163,6 +163,33 @@ Entonces debido a esto ↑ que se utiliza SQLite en el proyecto
 ### Migración
 Luego de toda la configuración previa se deberá hacer las migraciones, Laravel por defecto (gracias a Breeze) crea unas tablas en la BD, 3 tablas, lo siguiente será crear las tablas
 ## C03: Tablas:
+Hay varias formas de crear las tablas, para eso en Laravel se trabaja con las migraciones, para ahorrar tiempo y errores, con el siguiente comando se puede crear un modelo y una migración de una tabla: `php artisan make:model Comment -m`, si solo se quiere crear la migración sería con el siguiete comando:`php artisan make:migration create_flights_table`
+
+## C04: Modelos
+*Antes de crear migraciones o modelos leer C03 / Comentario no vinculado a un fichero*
+No todas las tablas en Laravel deben tener un modelo, para eso de deben cumplir ciertas condiciones.
+
+| Caso                                                    | ¿Crear Modelo?                      |
+| ------------------------------------------------------- | ----------------------------------- |
+| Tabla principal (como `Propietario`, `Residente`, etc.) | ✅ Sí                                |
+| Tabla pivot simple (como `departamento_residente`)      | ❌ No (salvo que tenga campos extra) |
+| Tabla auxiliar (`roles`, `torres`) que usarás en select | ✅ Sí                                |
+| Tabla técnica (`migrations`, `password_resets`)         | ❌ No                                |
+
+
+### Cuándo sí crear un modelo?
+- Se va a consultar o modificar datos de esta tabla desde Laravel
+- Se necesita usar **Eloquent** para esa tabla (ejemplo: relaciones, scoptes, etc)
+- Cuando se hagan operaciones como: `Model::all()`, `Model:find()`, `Model:create()`, etc.
+Como se crea un modelo con artisan: `php artisan make:model Departamento`
+
+### Cuándo no es necesario un modelo?
+- La tabla es auxiliar o de apoyo(ejemplo: tablas pivot o de logs muy simples)
+- Cuando nunca se va a interactuar directamente desde el código (ejmplo: una tabla migrations, falied_jobs, password_resets, etc)
+- Cuando solo se usará DB Query Builder y no Eloquent: `DB::table('torres')->where('nombre', 'A')->get();`
+
+### Casos intermedios: Tablas Pivot
+Las tablas intermedias en relaciones `many to many` a veces no requirern modelo, porque Laravel las gestion automáticamente. Pero cuando se quiere agregar campos extras en la tabla pivot (como fechas, estados, etc), entonces sí conviene hacerle un modelo y usar `->withPivot(...)`
 
 ## C02: Creación de Usuario por defecto (Con Seeder)
 Para poder crear un usuario por defecto y que esté anclado con las seeds será de la siguiente forma:
