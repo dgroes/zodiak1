@@ -11,7 +11,7 @@ Herramientas a utilizar
 A día de hoy está Laravel 12, pero se optará por la versión 11, debido a preferencias de desarrollo, como el utilizar Breeze, entre otras configuraciones.
 
 __Importante:__
-El proyecto se está desarrollando en Windows 10, pero se está utilizando `WSL` 🐧, la versión (Ubuntu-22.04). Para instalar la `WSL`, se instaló desde **MicrosoftStore**: (Ubuntu 22.04.5 LTS)[https://www.microsoft.com/store/productId/9PN20MSR04DW?ocid=libraryshare].
+El proyecto se está desarrollando en Windows 10, pero se está utilizando `WSL` 🐧, la versión (Ubuntu-22.04). Para instalar la `WSL`, se instaló desde **MicrosoftStore**: [Ubuntu 22.04.5 LTS](https://www.microsoft.com/store/productId/9PN20MSR04DW?ocid=libraryshare).
 Para saber que versión de **WSL** está corriendo se puede saber con el siguiente comando en la terminal de Windows: `wsl --list --verbose`, en el caso del proyecto aparece lo siguiente:
 ```bash
 ❯ wsl --list --verbose
