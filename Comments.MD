@@ -197,3 +197,72 @@ Para poder crear un usuario por defecto y que esté anclado con las seeds será 
 ### Creación de un Seeder
 Al ejectuar este comando se creará un seeder especifico:
 `php artisan make:seeder UserSeeder`
+
+
+### C03: Tablas Pivote (no aplica)
+Es una table que se usa para representar realaciones de **muchos a muchos**, por ejemplo:
+- Tabla `Students`
+- Tabla `courses`
+Un estudiante puede tomar muchos cursos, y un curso puede tener muchos estudiantes.
+```
+students
+    id | name
+
+courses
+    id | title
+
+course_student   ← 🔸 tabla pivote
+    id | student_id | course_id
+```
+Entonces la tabla pivote guarda referencias (FKs) a las otras 2 tablas, y no suele tener mucha lógica propia, Sirve como un "puente" para vincular dos modelos.
+Uno de los casos del proyecto serí la relación de las tablas `apartaments` y `residents`. Es decir:
+- Un departamento puede tener varios residentes
+### C04: Soft Delete
+Esta función de Laravel lo que hace es "**no eliminar físicamente un registro de la BD**", sino que le marca una fecha y hora en la columna `delete_at`. Esto permite "ocultar" el registro como si estuviera eliminado, pero aún sigue en la BD.
+Habitualmente se usa cuando:
+- Se quere permitir recuperación de registros eliminados
+- Se necesita mantener un historial
+- Se desea auditar o consultar registrso "eliminados"
+- Eliminar físicamente sería riesgoso o indebido
+Entonces cuando se usa `SoftDeletes`, Laravel oculta automáticamente los registros eliminados en consultas:
+```php
+User::all(); // NO muestra los eliminados
+```
+
+Para ver los eleiminados sería:
+```php
+User::onlyTrashed()->get();
+```
+
+Para su uso en el Modelo se debería agregar el trait:
+```php
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class User extends Model
+{
+    use SoftDeletes;
+}
+```
+
+Y además en la migración:
+```php
+$table->softDeletes(); // Crea columna deleted_at
+```
+
+Info:
+| Acción          | Resultado                                    |
+| --------------- | -------------------------------------------- |
+| `delete()`      | Marca como eliminado (llenando `deleted_at`) |
+| `forceDelete()` | Elimina realmente de la BD                   |
+| `restore()`     | Revierte la eliminación                      |
+| `onlyTrashed()` | Muestra solo eliminados                      |
+| `withTrashed()` | Muestra todos                                |
+
+###
+###
+###
+###
+###
+###
+###
+###
