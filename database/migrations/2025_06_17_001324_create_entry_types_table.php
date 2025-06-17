@@ -9,14 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    // Tabla de Residentes de un depto
+    // Tabla de Tipos de Entrada (para bitácoras)
     public function up(): void
     {
-        Schema::create('residents', function (Blueprint $table) {
+        Schema::create('entry_types', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('person_id')->unique();
-            $table->foreign('person_id')->references('id')->on('people')->onDelete('cascade');
-            $table->string('medical_disabilities')->nullable(); // Condificíon médica
+            $table->string('name')->unique(); // Nombre del tipo de entrada
+            $table->string('description')->nullable(); // Descripción del tipo de entrada
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('residents');
+        Schema::dropIfExists('entry_types');
     }
 };

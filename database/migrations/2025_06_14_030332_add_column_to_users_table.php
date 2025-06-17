@@ -9,10 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    // Añadir más columnas a la tabla de usuarios
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            //Añadir columnas despues de la columna 'id()'
+            $table->foreingId('staff_id')
+                ->nullable()
+                ->constrained('staff')
+                ->onDelete('set null'); // Referencia al p ersonal asociado al usuario
+
         });
     }
 

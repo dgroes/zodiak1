@@ -9,10 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    // Tabla de Bitacoras del puesto de consergería
     public function up(): void
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('staff_id')
+                ->constrained('staff')
+                ->onDelete('cascade'); // Referencia al personal que registra la bitácora
+            $table->string('entry'); // Entrada de la bitácora
+            $table->foreignId('entryType_id')
+                ->constrained('entry_types')
+                ->onDelete('cascade'); // Referencia al tipo de entrada
             $table->timestamps();
         });
     }

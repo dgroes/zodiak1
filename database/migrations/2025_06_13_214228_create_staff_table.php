@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('photo')->nullable(); // URL or path to the photo
             $table->string('notes')->nullable(); // Additional notes about the staff member
             $table->boolean('active')->default(true); // Indicates if the staff member is currently active
+            $table->softDeletes();
             $table->timestamps();
         });
     }
