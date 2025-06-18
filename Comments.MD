@@ -266,3 +266,66 @@ Info:
 ###
 ###
 ###
+## C05: Redundancia de datos
+Por defecto, Laravel incluye una migración llamada ``0001_01_01_000000_create_users_table``, la cual define campos importantes en la tabla ``users``. Sin embargo, en este caso, la tabla ``users`` está relacionada con la tabla ``staff``.
+
+La tabla ``staff`` representa al personal que trabaja en el edificio. Por reglas de negocio, cada ``staff`` debería tener un user en el sistema para poder iniciar sesión. No obstante, ``staff`` ya contiene un campo de nombre, al igual que la tabla ``users``.
+
+Cabe destacar que ``staff`` obtiene su nombre desde la tabla ``people``, mediante una clave foránea (person_id). Por lo tanto, ``staff`` ya cuenta con un nombre gracias a su relación con ``people``.
+
+Dado esto, mantener el campo name en la tabla ``users`` genera redundancia de datos, ya que ese dato ya existe en la estructura relacionada.
+La mejor solución sería eliminar el campo name de la tabla ``users``, y utilizar los datos que provienen desde ``people``, a través de la relación con ``staff``.
+
+## C06 Tablas extras de Laravel
+**Laravel** al instalarse con ciertas caracteristicas como `Breeze`, esto hace que además se agregen tablas (migraciones) las cuales son tablas **esenciales para el funcionamiento de para distintas funcionalidades**
+
+### Password Reset Tokens
+Tabla para gestionar los tokens que permiten restablecer la contraseña.
+```php
+Schema::create('password_reset_tokens', function (Blueprint $table) {
+    $table->string('email')->primary();
+    $table->string('token');
+    $table->timestamp('created_at')->nullable();
+});
+```
+- Guarda el email, token y fecha de creación del token para recuperación de contraseña.
+- Permite validar que el token aún sea válido para resetear la contraseña.
+
+### Sessions
+Tabla que almacena las sesiones activas de los usuarios.
+```php
+Schema::create('sessions', function (Blueprint $table) {
+    $table->string('id')->primary();
+    $table->foreignId('user_id')->nullable()->index();
+    $table->string('ip_address', 45)->nullable();
+    $table->text('user_agent')->nullable();
+    $table->longText('payload');
+    $table->integer('last_activity')->index();
+});
+```
+- Guarda información de la sesión: id, usuario asociado, IP, agente de usuario (browser), datos adicionales (payload) y última actividad.
+- Facilita la gestión y control de sesiones para autenticación y seguridad.
+
+### Cache y Cache_locks
+```php
+Schema::create('cache', function (Blueprint $table) {
+    $table->string('key')->primary();
+    $table->mediumText('value');
+    $table->integer('expiration');
+});
+
+Schema::create('cache_locks', function (Blueprint $table) {
+    $table->string('key')->primary();
+    $table->string('owner');
+    $table->integer('expiration');
+});
+```
+- Usadas por Laravel para almacenar datos temporales en caché.
+- cache guarda los datos cacheados.
+- cache_locks gestiona bloqueos para evitar condiciones de carrera en operaciones de caché.
+
+##
+##
+##
+##
+##
