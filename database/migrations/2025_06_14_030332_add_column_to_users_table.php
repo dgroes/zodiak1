@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //Añadir columnas despues de la columna 'id()'
-            $table->foreingId('staff_id')
+            $table->foreignId('staff_id')
                 ->nullable()
                 ->constrained('staff')
                 ->onDelete('set null'); // Referencia al p ersonal asociado al usuario

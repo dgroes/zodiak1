@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::create('patrols', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_id')
-                ->constrained('staff')
-                ->onDelete('cascade'); // Referencia al personal que realiza la ronda
+            $table->foreignId('work_session_id')
+                ->constrained('work_sessions')
+                ->onDelete('cascade'); // Relaciona con la tabla de sesiones de trabajo
             $table->string('details');
             $table->dateTime('start_time'); // Hora de inicio de la ronda
             $table->timestamps();

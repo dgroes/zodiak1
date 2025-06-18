@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->string('phone');
-            $table->string('email')->nullable();
+            // $table->string('email')->nullable();
             $table->string('address');
             $table->string('photo')->nullable(); // URL or path to the photo
             $table->string('notes')->nullable(); // Additional notes about the staff member

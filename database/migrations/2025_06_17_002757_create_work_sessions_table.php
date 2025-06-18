@@ -20,6 +20,9 @@ return new class extends Migration
             $table->foreignId('schedule_id')
                 ->constrained('schedules')
                 ->onDelete('cascade'); // Referencia al horario asociado a la sesión de trabajo
+            $table->foreignId('tower_id')
+                ->constrained('towers')
+                ->onDelete('cascade'); // Relaciona con la torre del edificio
             $table->dateTime('start_time'); // Hora de inicio de la sesión de trabajo
             $table->dateTime('end_time')->nullable(); // Hora de fin de la sesión de trabajo
             $table->timestamps();

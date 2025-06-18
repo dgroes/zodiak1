@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('people', function (Blueprint $table) {
             $table->id();
             $table->string('run');
+            $table->string('document_number')->unique()->nulleable(); //En caso que no tenga RUN chileno
             $table->string('names');
             $table->string('last_names');
             $table->timestamps();

@@ -14,14 +14,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            // $table->string('name'); 
+            $table->foreignId('staff_id')
+                ->constrained('staff')
+                ->onDelete('cascade'); // Referencia al personal asociado al usuario
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
 
+        /* C06 Tablas extras de Laravel (breeze) */
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');

@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_id')
-                ->constrained('staff')
-                ->onDelete('cascade'); // Referencia al personal que registra la bitácora
+            $table->foreignId('work_session_id')
+                ->constrained('work_sessions')
+                ->onDelete('cascade'); // Relaciona con la tabla de sesiones de trabajo
             $table->string('entry'); // Entrada de la bitácora
             $table->foreignId('entryType_id')
                 ->constrained('entry_types')
