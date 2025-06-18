@@ -24,8 +24,6 @@ return new class extends Migration
             $table->foreignId('entryType_id')
                 ->constrained('entry_types')
                 ->onDelete('cascade'); // Referencia al tipo de entrada
-
-            $table->dateTime('created_at'); // Fecha y hora de creación de la entrada
             $table->timestamps();
         });
     }
