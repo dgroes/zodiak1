@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'staff_id' => 1,
                 'email' => 'joseluis@gmail.com',
                 'password' => Hash::make('joseluis1234'), //Contraseña segura en la BD
+                'email_verified_at' => now(),
                 'remember_token' => Str::random(10), // Genera un token aleatorio
                 'created_at' => now(),
                 'updated_at' => now()

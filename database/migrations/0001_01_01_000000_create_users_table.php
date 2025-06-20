@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            // $table->string('name'); 
+            // $table->string('name');
             $table->foreignId('staff_id')
-                ->constrained('staff')
+                ->constrained('staffs')
                 ->onDelete('cascade'); // Referencia al personal asociado al usuario
             $table->string('email')->unique();
             $table->string('password');

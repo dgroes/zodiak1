@@ -14,7 +14,7 @@ return new class extends Migration
         //Conserje, Auxiliar, Administrador, etc.
         Schema::create('staffs', function (Blueprint $table) {
             $table->id();
-            $table->string('run')->nullable(); // RUN chileno (Rol Único Nacional)
+            $table->string('run')->unique()->nullable(); // RUN chileno (Rol Único Nacional)
             $table->string('document_number')->unique()->nullable(); // En caso que no tenga RUN chileno
             $table->string('names');
             $table->string('last_names');

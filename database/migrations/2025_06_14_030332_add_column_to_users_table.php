@@ -17,7 +17,7 @@ return new class extends Migration
             Schema::table('users', function (Blueprint $table) {
                 $table->foreignId('staff_id')
                     ->nullable()
-                    ->constrained('staff')
+                    ->constrained('staffs')
                     ->onDelete('set null');
             });
         }
