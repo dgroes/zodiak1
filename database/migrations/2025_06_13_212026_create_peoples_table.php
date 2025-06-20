@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('people', function (Blueprint $table) {
+        Schema::create('peoples', function (Blueprint $table) {
             $table->id();
-            $table->string('run');
+            $table->string('run')->nullable(); // RUN chileno (Rol Único Nacional)
             $table->string('document_number')->unique()->nulleable(); //En caso que no tenga RUN chileno
             $table->string('names');
             $table->string('last_names');
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('people');
+        Schema::dropIfExists('peoples');
     }
 };

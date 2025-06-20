@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         //Conserje, Auxiliar, Administrador, etc.
-        Schema::create('staff', function (Blueprint $table) {
+        Schema::create('staffs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('person_id')->unique();
-            $table->foreign('person_id')->references('id')->on('people')->onDelete('cascade');
+            $table->string('run')->nullable(); // RUN chileno (Rol Único Nacional)
+            $table->string('document_number')->unique()->nullable(); // En caso que no tenga RUN chileno
+            $table->string('names');
+            $table->string('last_names');
             $table->enum('role', ['Conserje', 'Auxiliar', 'Administrador']);
             $table->date('start_date');
             $table->date('end_date')->nullable();
@@ -35,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('staff');
+        Schema::dropIfExists('staffs');
     }
 };
