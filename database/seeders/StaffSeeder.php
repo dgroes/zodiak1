@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Staff;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,8 @@ class StaffSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('staffs')->insert([
+
+        $staffMembers = [
             [
                 'run' => '13781401-1',
                 'document_number' => null,
@@ -58,7 +60,7 @@ class StaffSeeder extends Seeder
             ],
             [
                 'run' => null,
-                'document_number' => 'DNI123456',
+                'document_number' => 'BASDC1351',
                 'names' => 'Junior Peterson',
                 'last_names' => 'Jean',
                 'role' => 'Conserje',
@@ -98,7 +100,6 @@ class StaffSeeder extends Seeder
                 'notes' => null,
                 'active' => true,
             ],
-            // 15 personas adicionales (ejemplos variados)
             [
                 'run' => '22333444-5',
                 'document_number' => null,
@@ -126,18 +127,6 @@ class StaffSeeder extends Seeder
                 'photo' => null,
                 'notes' => null,
                 'active' => true,
-            ],
-            [
-                'run' => '44555666-7',
-                'document_number' => null,
-                'names' => 'Camila Ignacia',
-                'last_names' => 'Vega Díaz',
-                'role' => 'Auxiliar',
-                'start_date' => '2023-09-05',
-                'end_date' => null,
-                'phone' => '56967890123',
-                'address' => 'Calle Moderna 123',
-                // Add more staff members as needed
             ],
             [
                 'run' => '77888999-1',
@@ -183,7 +172,7 @@ class StaffSeeder extends Seeder
             ],
             [
                 'run' => null,
-                'document_number' => 'ST870621345',
+                'document_number' => 'ST870621341',
                 'names' => 'John',
                 'last_names' => 'Doe',
                 'role' => 'Conserje',
@@ -195,8 +184,16 @@ class StaffSeeder extends Seeder
                 'notes' => 'I admire you. I dont know how you found me, but imagine my surprise. I respect you law',
                 'active' => false,
             ],
+        ];
 
-
-        ]);
+        /* C09: Manejador de errores inteligente */
+        foreach ($staffMembers as $staff) {
+            try {
+                Staff::create($staff);
+                $this->command->info("[OK] Staff {$staff['names']} creado.");
+            } catch (\Exception $e) {
+                $this->command->error("Error al crear staff {$staff['names']}: {$e->getMessage()}");
+            }
+        }
     }
 }
