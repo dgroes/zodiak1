@@ -38,11 +38,17 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class)->setTable('staffs');
     }
 }
