@@ -324,6 +324,168 @@ Schema::create('cache_locks', function (Blueprint $table) {
 - cache guarda los datos cacheados.
 - cache_locks gestiona bloqueos para evitar condiciones de carrera en operaciones de caché.
 
+## C07: Semillas
+Laravel incluye la capacidad de llenar tu base de datos con datos utilizando clases de seed. Todas las clases de seed se almacenan en el directorio `database/seeders`. Por defecto, se define una clase DatabaseSeeder para ti. Desde esta clase, puedes usar el método call para ejecutar otras clases de seed, lo que te permite controlar el orden de llenado.
+
+Para generar un seeder, con el este comando se crearía la seed:
+```shell
+php artisan make:seeder UserSeeder
+```
+
+Una clase de seeder solo contiene un método por defecto: run. Este método se llama cuando se ejecuta el comando db:seed de Artisan. Dentro del método run, puedes insertar datos en tu base de datos como desees. Puedes usar el query builder para insertar datos manualmente o puedes usar factory de modelos Eloquent. Como ejemplo, vamos a modificar la clase DatabaseSeeder predeterminada y añadir una declaración de inserción en la base de datos al método run
+
+Dentro de la clase `DatabaseSeeder`, puedes usar el método `call` para **ejecutar clases de siembra adicionales**. Usar el método `call` te **permite dividir la siembra de tu base de datos en múltiples archivos** para que ninguna clase de sembrador se vuelva demasiado grande. El método `call` acepta un array de clases de sembrador que deben ser ejecutadas:
+```php
+public function run(): void
+{
+    $this->call([
+        UserSeeder::class,
+        PostSeeder::class,
+        CommentSeeder::class,
+    ]);
+}
+```
+Luego de ya tener preparadas las `seeds` faltaría ejecutar `db:seed` para "sembrar la BD". Por defecto el comando `db:seed` ejecuta la clase `Database\Seeders\DatabaseSeeder`, que a su vez puede invocar otras clases de siembra. Sin embargo, se puede usar la opción `--class` para especificar una clase de sembrador especifica para ejecutar de forma individual:
+```shell
+php artisan db:seed
+
+php artisan db:seed --class=UserSeeder
+```
+
+**Migrado con seeds**
+Tambien se puede sembrar la BD utilizando el comando `migrate:fresh` en combinación con la opción `--seed`, que eliminará todas las tablas y volcerá a ejecutar todas las migraciones. Últil para reconstruir completamente la BD. La opción `--seeder` se puede usar para especificar un sembrador especifico a ejecutar:
+```bash
+php artisan migrate:fresh --seed
+
+php artisan migrate:fresh --seed --seeder=UserSeeder
+```
+*más info en -->* [BD:Seeders](https://documentacionlaravel.com/docs/11.x/seeding)
+
+## C08: Un dato u otro (run o documento)
+A la hora de crar un "**Person**" o "**Staff**", está en ambas tablas las columnas:
+```php
+$table->string('run')->unique()->nullable();
+$table->string('document_number')->unique()->nullable();
+```
+Esto quiere decir que ambas pueden ser **Null**, esto es lógico ya que si tengo un **Run**, el `document_number` debería estar en `null` cuando cree un registro ya sea con Seeds o manual en el registro. Pero esto puede llevar a un error, se tiene que establecer que: "**tiene que ser uno o el otro, no pueden ser ambos null en un registro**", para solucionar esto se puede hacer de un par de formas, esto dependerá de la BD en la cual se hacen los registros, MySQL o SQLite tienen distintos comandos que aveces no son compatibles entre ellos, pero para solucionar este problema ser hará desde los **Models**.
+
+Por ejemplo dentro del `app/Models/Staff.php` deberá estar:
+```php
+static::saving(function ($staff) {
+            if (empty($staff->run) && empty($staff->document_number)) {
+                throw new \Exception('Debe ingresar al menos RUN o Document Number.');
+            }
+        });
+```
+Esto `if` verifica que cuando se haga una población de los datos de la tabla `staff` que no pueden estar vacios (`null`) ambos, solo puede estar `null` uno de los dos.
+
+__Pero esto solo funcionará si se usa "**Eloquent en lugar de BD facade**"__
+### DB Facade (Consulta Directa con SQL)
+Es una capa que permite ejecutar consultas SQL directas sin pasar por el modelo **Eloquent**, por ejemplo:
+```php
+DB::table('staffs')->insert([...]);
+```
+- No usa modelos Eloquent, por lo tanto:
+    - No dispara eventos del modelo (como `creating`, `saving`, etc)
+    - Iganora validaciones definidas en el modelo
+    - No aplica mutadores/accessors (ej: `getFullNameAttribute`)
+- Más rápido para operaciones masivas (insertar 1000 registros)
+- ütil para consultas complejas o cuando Eloquent es limitado
+
+Entonces en base a este caso de "run o número de documento", la validación `boot()` del modelo `Staff` no se ejectuará nunca al usar `DB::insert`.
+
+### Eloquent (ORM de Laravel)
+Es el sistema de **mapeo objeto-relacional** (ORM) de Laravel. Trabajao con modelos (clases PHP que representan tablas). Ejemplo:
+```php
+Staff::create([...]);
+```
+- Usa modelos, por lo tanto:
+    - Dispara eventos del modelo (ej: validaciones en `boot()`).
+    - Aplica mutadores/accessors.
+    - Maneja automáticamente `timestamps`.
+    - Soporta relaciones (`hasMany`, `belongsTo`, etc.).
+- Más lento en operaciones masivas (pero tiene métodos como `insert` para optimizar).
+- Mejor legibilidad y mantenimiento.
+En base al caso de "run o número de documento" si uso `Staff::create()`, la validación creada en el modelo `Staff` si funcionará.
+
+### Cuando usar cada uno
+**Usa Eloquent cuando:**
+- Necesitas validaciones, eventos o relaciones.
+- Priorizas código mantenible y claro.
+- Ejemplo: CRUD de usuarios, staff, etc.
+
+**Usa DB Facade cuando:**
+- Necesitas máxima velocidad (miles de registros).
+- Haces consultas complejas con subconsultas.
+- Ejemplo: Reportes con cálculos agregados.
+
+### Comprobación de uso de Eloquent
+Siguiendo con el ejemplo de un `Staff` que tenga el `run` y `document_number` ambos en `null`.
+**Si uso DB Facade no hay errores:**
+```bash
+  Database\Seeders\StaffSeeder ....... RUNNING
+  Database\Seeders\StaffSeeder .... 39 ms DONE
+```
+
+**Con Eloquent me arroja el error esperado, ya que si se hace uso del model `Staff`:**
+```bash
+Database\Seeders\StaffSeeder ....... RUNNING
+Error al crear staff Junior Peterson: Debe ingresar al menos RUN o Document Number.
+Database\Seeders\StaffSeeder .... 38 ms DONE
+```
+Aquí apropisito se puso los registro de run y documento en null (**se puso en null en el ejemplo de DB Facade igualmente**):
+```json
+'run' => null,
+'document_number' => null,
+```
+
+
+## C09: Manejador de errores inteligente
+*más info->* [Manejo de errores](https://documentacionlaravel.com/docs/11.x/errors)
+```php
+foreach ($staffMembers as $staff) {...}
+```
+Primero se recorre cada elemento del array `staffMembers`
+
+```php
+try {
+    Staff::create($staff);
+} catch (\Exception $e) {...}
+```
+- Ahora con `try` intenta crear el registro con `Staff::create()` (usando Eloquent)
+- con el `catch`, si falla (por la validación y otro error), "**atrapa**" la excepción para ecitar que el seeder se detenga.
+- Ejemplo práctico: Si el registro de "Junior Peterson" tiene `run` y `document_number` como **null**, el modelo lanzará una excepción, pero el seeder continuará con los siguientes registros.
+
+```php
+$this->command->error("Error al crear staff {$staff['names']}: {$e->getMessage()}");
+```
+Se muestra un mensaje de error en rojo en la terminal con:
+- Nombre del staff fallido (`{$staff['names']}`)
+- Motivo del error: `{$e->getMessage()}`
+Salida por consola de esto:
+```bash
+Database\Seeders\StaffSeeder .... RUNNING
+Error al crear staff Junior Peterson: Debe ingresar al menos RUN o Document Number.
+```
+
+Entonces es muy útil su uso por:
+- **No se detiene ante errores**: Si un registro falla, el seeder continúa con los demás (en lugar de parar todo el proceso).
+- **Dice exactamente qué falló**: Sabrás qué registro tiene problemas y por qué.
+- **Es profesional**: Es la forma estándar de manejar errores en Laravel.
+
+## C10: Evento de modelo Eloquent
+```php
+static::saving(function ($staff) {
+    if (empty($staff->run) && empty($staff->document_number)) {
+        throw new \Exception('Debe ingresar al menos RUN o Document Number.');
+    }
+});
+```
+Hace una **validación** que al menos uno de los campos run o document_number esté presente **antes de guardar en la BD <--**
+Al ser un **Trigger**, se ejecuta **antes** de cualquier operación `save()` o `create()` en el modelo `Staff`.
+
+##
+##
 ##
 ##
 ##
