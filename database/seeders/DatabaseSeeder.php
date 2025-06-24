@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             PeopleSeeder::class,
             StaffSeeder::class,
             UserSeeder::class,
-            // TowerSeeder::class,
+            ResidentSeeder::class,
+            TowerSeeder::class,
         ]);
     }
 }
