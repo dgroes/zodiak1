@@ -484,7 +484,50 @@ static::saving(function ($staff) {
 Hace una **validación** que al menos uno de los campos run o document_number esté presente **antes de guardar en la BD <--**
 Al ser un **Trigger**, se ejecuta **antes** de cualquier operación `save()` o `create()` en el modelo `Staff`.
 
-##
+## C11: Indices para consultas
+Los `index` en una migración de Laravel sirven para acelerar las búsquedas y mejorar el rendimiento de las consultas en columnas específicas.
+- Mejoran la velocidad de búsqueda en columnas muy consultadas (como IDs o textos que se filtar frecuentemente).
+- Acelerar las cláusulas WHERE, JOIN, ORDERB BY, y similares cuando se aplican sobre columnas indexadas.
+- Son útiles cuando se tienen grandes volúmenes de datos y se necesita acceder rápido a registros específicos.
+
+**Por ejemplo**:
+```php
+$table->index('apartament_id');
+```
+Esto hace que cuando se consulte por `apartament_id`. como:
+```sql
+SELECT * FROM mailboxes WHERE apartament_id = 5;
+```
+La base de datos encuentre los resultados más rápido gracias al índice.
+
+>⚠️ Nota: Usar muchos índices innecesarios puede ralentizar las inserciones o actualizaciones, así que se recomienda usarlos solo en columnas que se filtran o consultan frecuentemente.
+
+## C12: Dependencia Circular
+Cuando dos o más elementos dependen unos de otros de forma que se crea un ciclo, y ninguno puede existir sin que el otro exista antes.
+
+**🧱 En bases de datos (con seeders por ejemplo):**
+1. A necesita B para crearse
+2. Pero B necesita C.
+3. Y C necesita A
+Esto causa un **bucle**, porque ninguno puede crearse primero sin que los otros ya existan.
+
+En este caso de Torres, Residentes y Apartamentos pasa esto:
+- Una torre necesita un líder (un residente).
+- Pero ese residente necesita un departamento.
+- Y ese departamento necesita estar en una torre.
+Esto hace que ninguno puede crearse primero.
+
+Una solución es crear los datos en partes.
+- Primero crear los registros sin las relaciones que dependen uno de otros
+- Luego, crear ya existen todos, actualizar las relaciones.
+
+Entonces hay una dependencia circular entre TowerSeeder, ResidentSeeder y AprtmentSeeder:
+- `TowerSeeder` → requiere que exista un `resident` con `id = 1` (porque `leader_id = 1`)
+- `ResidentSeeder` → requiere que exista un `apartment` con `id = 1`
+- `ApartmentSeeder` → requiere que exista una `tower` con `id = 1`
+
+
+
 ##
 ##
 ##
