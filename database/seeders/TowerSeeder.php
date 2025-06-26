@@ -16,26 +16,26 @@ class TowerSeeder extends Seeder
     {
         $towers = [
             [
-            'name' => 'Torre Sur',
-            'address' => 'Miguel Juarez 730',
-            'leader_id' => 1, // Asumiendo que el líder con ID 1 ya existe
+                'name' => 'Torre Sur',
+                'address' => 'Miguel Juarez 730',
+                /* 'leader_id' => 1 */ // Asumiendo que el líder con ID 1 ya existe
+                'leader_id' => null
             ],
             [
-            'name' => 'Torre Norte',
-            'address' => 'Miguel Juarez 780',
-            'leader_id' => 2, // Asumiendo que el líder con ID 2 ya existe
+                'name' => 'Torre Norte',
+                'address' => 'Miguel Juarez 780',
+                /* 'leader_id' => 2, */ // Asumiendo que el líder con ID 2 ya existe
+                'leader_id' => null
             ],
 
         ];
 
-        foreach ($towers as $tower){
+        foreach ($towers as $tower) {
             Tower::create([
                 'name' => $tower['name'],
                 'address' => $tower['address'],
                 'leader_id' => $tower['leader_id'],
             ]);
         }
-
-
     }
 }
