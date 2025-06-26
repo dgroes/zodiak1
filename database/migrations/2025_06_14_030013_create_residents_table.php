@@ -16,8 +16,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('person_id')->unique();
             $table->foreign('person_id')->references('id')->on('people')->onDelete('cascade');
+            $table->foreignId('apartment_id')
+                ->constrained('apartments')
+                ->onDelete('cascade');
             $table->string('medical_disabilities')->nullable(); // Condificíon médica
             $table->timestamps();
+
         });
     }
 
