@@ -19,8 +19,11 @@ class DatabaseSeeder extends Seeder
             PeopleSeeder::class,
             StaffSeeder::class,
             UserSeeder::class,
-            ResidentSeeder::class,
             TowerSeeder::class,
+            OwnerSeeder::class,
+            ApartmentSeeder::class,
+            ResidentSeeder::class,
+            ExternalWorkerSeeder::class,
         ]);
     }
 }

@@ -190,7 +190,7 @@ class StaffSeeder extends Seeder
         foreach ($staffMembers as $staff) {
             try {
                 Staff::create($staff);
-                $this->command->info("[OK] Staff {$staff['names']} creado.");
+                $this->command->info("[OK] Staff {$staff['names']} creado 👨🏻‍💼");
             } catch (\Exception $e) {
                 $this->command->error("Error al crear staff {$staff['names']}: {$e->getMessage()}");
             }
