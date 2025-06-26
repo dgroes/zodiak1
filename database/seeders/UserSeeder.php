@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert([
+       $users = [
             [
                 'staff_id' => 1,
                 'email' => 'joseluis@gmail.com',
@@ -43,6 +44,15 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ]
-        ]);
+        ];
+
+        foreach ($users as $user){
+            try{
+                User::create($user);
+                $this->command->info("[OK] User: {$user['email']} creado 👨‍💻");
+            } catch (\Exception $e){
+                $this->command->error("Error al crear {$user['staff_id']} :{$e->getMessage()}");
+            }
+        }
     }
 }
