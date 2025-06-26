@@ -14,14 +14,15 @@ return new class extends Migration
     {
         Schema::create('residents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('person_id')->unique();
-            $table->foreign('person_id')->references('id')->on('people')->onDelete('cascade');
+            $table->string('run')->unique()->nullable();
+            $table->string('document_number')->unique()->nullable();
+            $table->string('names');
+            $table->string('last_names');
             $table->foreignId('apartment_id')
                 ->constrained('apartments')
                 ->onDelete('cascade');
             $table->string('medical_disabilities')->nullable(); // Condificíon médica
             $table->timestamps();
-
         });
     }
 

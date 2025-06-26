@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('apartments', function (Blueprint $table) {
             $table->id();
             //Ide del propietario
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('owner_id')->constrained('owners')->onDelete('cascade');
             //Id del edificio
             $table->foreignId('tower_id')->constrained('towers')->onDelete('cascade');
             $table->integer('number')->unique();
