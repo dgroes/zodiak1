@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
        $users = [
             [
                 'staff_id' => 1,
+                'name' => 'jose',
                 'email' => 'joseluis@gmail.com',
                 'password' => Hash::make('joseluis1234'), //Contraseña segura en la BD
                 'email_verified_at' => now(),
@@ -28,6 +29,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'staff_id' => 2,
+                'name' => 'diego',
                 'email' => 'diego@gmail.com',
                 'password' => Hash::make('diego1234'),
                 'email_verified_at' => now(),
@@ -37,6 +39,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'staff_id' => 3,
+                'name' => 'kakashi',
                 'email' => 'kakashi@gmail.com',
                 'password' => Hash::make('kakashi1234'),
                 'email_verified_at' => now(),
